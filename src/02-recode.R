@@ -1,0 +1,74 @@
+library(testthat)
+library(ggplot2)
+
+load(file = 'output/wave1.RData')
+
+source('src/recode.R')
+
+## H1TO12: Have you had a drink of beer, wine, or liquor- not just a
+## sip or a taste of someone else's drink- more than 2 or 3 times in
+## your life?
+
+## H1TO15: During the past 12 months, on how many days did you drink
+## alcohol?
+
+## H1TO16: Think of all the times you have had a drink during the past
+## 12 months. How many drinks did you usually have each time? (A
+## "drink" is a glass of wine, a can of beer, a wine cooler, a shot
+## glass of liquor, or a mixed drink.)
+
+# school topics
+school_pattern <- '^H1TS'
+school_columns <- grep(pattern = school_pattern, x = names(df))
+expect_equal(length(school_columns), 17)
+school <- df[, school_columns]
+school[school != 0 & school != 1] <- NA
+school_counts <- apply(X = school, MARGIN = 1, sum, na.rm = TRUE)
+expect_equal(length(school_counts), nrow(df))
+
+df_analysis <- data.frame('school_counts' = school_counts)
+
+                                        # ggplot(data = as.data.frame(school_counts), aes(x = school_counts)) + geom_bar()
+
+school_bin <- sapply(X = school_counts, FUN = recode_school_bin, cutoff = 14)
+
+df_analysis <- cbind(df_analysis, school_bin)
+
+## drinking outcome variable
+
+any_drink <- apply(X = df, MARGIN = 1, FUN = recode_any_drink)
+
+risky_drink <- apply(X = df, MARGIN = 1, FUN = recode_risky_drink)
+
+any_risky_drink_df <- data.frame('any_drink' = any_drink, 'risky_drink' = risky_drink)
+
+any_risky_drink_df$drink_cat_3 <- apply(any_risky_drink_df, 1, recode_drink_cat_3)
+
+# head(any_risky_drink_df)
+
+df_analysis <- cbind(df_analysis, any_risky_drink_df)
+
+df_analysis$drink_cat_2 <- apply(any_risky_drink_df, 1, recode_drink_cat_2)
+
+
+## race
+## TODO NEED TO LOOK INTO THIS CODE
+race4 <- apply(X = df, MARGIN = 1, FUN = recode_race)
+
+df_analysis <- cbind(df_analysis, race4)
+
+
+## age
+age_cont <- apply(X = df, MARGIN = 1, FUN = recode_age_cont)
+
+                                        # hist(age_cont)
+df_analysis <- cbind(df_analysis, age_cont)
+
+
+## age cat 3
+age_cat_3 <- apply(X = df_analysis, MARGIN = 1, FUN = recode_age_cat)
+
+df_analysis <- cbind(df_analysis, age_cat_3)
+
+
+save(df_analysis, file='output/w1_clean.RData')
