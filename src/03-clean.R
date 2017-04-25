@@ -1,0 +1,15 @@
+rm(list = ls())
+load('output/data/w1_clean.RData')
+
+df_analysis$drink_cat_2 <- as.factor(df_analysis$drink_cat_2)
+df_analysis$race4 <- as.factor(df_analysis$school_bin)
+df_analysis$age_cat_3 <- as.factor(df_analysis$age_cat_3)
+df_analysis$sex <- as.factor(df_analysis$sex)
+df_analysis$income <- as.factor(df_analysis$income)
+df_analysis$urbanicity <- as.factor(df_analysis$urbanicity)
+df_analysis$school_bin <- as.factor(df_analysis$school_bin)
+df_analysis$pedu <- as.factor(df_analysis$pedu )
+df_analysis$rel_teacher <- as.factor(df_analysis$rel_teacher)
+df_analysis$rel_student <- as.factor(df_analysis$rel_student)
+
+save(df_analysis, file = 'output/data/w1_clean.RData')
