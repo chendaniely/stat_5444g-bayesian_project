@@ -1,21 +1,10 @@
 library(testthat)
 library(ggplot2)
 
-load(file = 'output/wave1.RData')
+rm(list = ls())
 
+load(file = 'output/wave1.RData') ## proves the `df` of the w1 data
 source('src/recode.R')
-
-## H1TO12: Have you had a drink of beer, wine, or liquor- not just a
-## sip or a taste of someone else's drink- more than 2 or 3 times in
-## your life?
-
-## H1TO15: During the past 12 months, on how many days did you drink
-## alcohol?
-
-## H1TO16: Think of all the times you have had a drink during the past
-## 12 months. How many drinks did you usually have each time? (A
-## "drink" is a glass of wine, a can of beer, a wine cooler, a shot
-## glass of liquor, or a mixed drink.)
 
 # school topics
 school_pattern <- '^H1TS'
@@ -71,4 +60,22 @@ age_cat_3 <- apply(X = df_analysis, MARGIN = 1, FUN = recode_age_cat)
 df_analysis <- cbind(df_analysis, age_cat_3)
 
 
-save(df_analysis, file='output/w1_clean.RData')
+## sex
+df_analysis$sex <- apply(df, 1, recode_sex)
+
+## parent's education
+df_analysis$pedu <- apply(df, 1, recode_pEducation)
+
+## urbanicity
+df_analysis$urbanicity <- apply(df, 1, recode_urbanicity)
+
+## income
+df_analysis$income <- apply(df, 1, recode_income)
+
+## relationship teacher
+df_analysis$rel_teacher <- apply(df, 1, recode_rel_teach)
+
+## relationship students
+df_analysis$rel_student <- apply(df, 1, recode_rel_student)
+
+save(df_analysis, file='output/data/w1_clean.RData')

@@ -87,7 +87,7 @@ recode_drink_cat_2 <- function(row) {
 
     if (is.na(drink_cat)) {
         return(NA)
-    } else if (drink_cat == 0) {
+    } else if (drink_cat == 0 | drink_cat == 1) {
         return(0)
     } else {
         return(1)
@@ -98,17 +98,16 @@ recode_race <- function(row) {
 
     ## Which one category best describe your racial background?
     ##  1=White, 2=Black/African American, 4=Asian/Pacific Islander
-    h1gi8 <- row['H1GI8']
+    h1gi8 <- as.numeric(row['H1GI8'])
     if (is.na(h1gi8 %in% c(1, 2, 4))) {
         h1gi8 <- NA
-        print('h1gi8 na')
     } else if (h1gi8 %in% c(1, 2, 4)) {
         h1gi8 <- h1gi8
     } else {
-        h1gi8 <- 99999
+        h1gi8 <- NA
     }
     ## hispanic
-    h1gi4 <- row['H1GI4']
+    h1gi4 <- as.numeric(row['H1GI4'])
     his <- h1gi4
     if (is.na(h1gi4 %in% c(0, 1))){
         his <- NA
@@ -119,7 +118,7 @@ recode_race <- function(row) {
         his <- 0
     }
     ## white
-    h1gi6a <- row['H1GI6A']
+    h1gi6a <- as.numeric(row['H1GI6A'])
     white <- h1gi6a
     if (is.na(h1gi6a %in% c(0, 1))) {
         white <- NA
@@ -130,7 +129,7 @@ recode_race <- function(row) {
         white <- 0
     }
     ## black
-    h1gi6b <- row['H1GI6B']
+    h1gi6b <- as.numeric(row['H1GI6B'])
     black <- h1gi6b
     if (is.na(h1gi6b %in% c(0, 1))) {
         black <- NA
@@ -141,7 +140,7 @@ recode_race <- function(row) {
         black <- 0
     }
     ## asian
-    h1gi6d <- row['H1GI6D']
+    h1gi6d <- as.numeric(row['H1GI6D'])
     asian <- h1gi6d
     if (is.na(h1gi6d %in% c(0, 1))) {
         asian <- NA
@@ -161,7 +160,7 @@ recode_race <- function(row) {
     } else if (his != 1 & asian == 1) {
         return(4) # asian
     } else {
-        return(99999)
+        return(NA)
     }
 }
 
@@ -200,4 +199,104 @@ recode_age_cat <- function(row) {
     } else {
         return(NA)
     }
+}
+
+recode_sex <- function(row) {
+    sex <- as.numeric(row['BIO_SEX'])
+
+    if (is.na(sex == 1)) {
+        return(NA)
+    } else if (sex == 1) {
+        return(1)
+    } else if (sex ==2) {
+        return(2)
+    } else {
+        return(NA)
+    }
+}
+
+recode_pEducation <- function(row) {
+    pedu <- as.numeric(row['PA12'])
+
+    if (is.na(pedu %in% c(1, 2, 3, 5))) {
+        return(NA)
+    } else if (pedu %in% c(1, 2, 3, 5)) {
+        return(0)  ## less than high school
+    } else if (is.na(pedu == 4)) {
+        return(NA)
+    } else if (pedu == 4) {
+        return(1) ## high school
+    } else if (is.na(pedu %in% 6:9)) {
+        return(NA)
+    } else if (pedu %in% 6:9) {
+        return(2) ## more than HS
+    } else {
+        return(NA)
+    }
+}
+
+recode_urbanicity <- function(row) {
+    urban <- as.numeric(row['H1IR12'])
+
+    tryCatch({
+        if ((urban == 1)) {
+            return(0) ## rural
+        } else if (urban == 2) {
+            return(1) ## suburban
+        } else if (urban %in% 3:6) {
+            return(2)
+        } else {
+            return(NA)
+        }
+    }, error = function(e) {
+        return(NA)
+    })
+}
+
+recode_income <- function(row) {
+    income <- as.numeric(row['PA55'])
+
+    tryCatch({
+        if (0 <= income & income <= 20) {
+            return(0)
+        } else if (20 < income & income <= 35) {
+            return(1)
+        } else if (35 < income & income <= 70) {
+            return(2)
+        } else if (70 < income & income <= 9995) {
+            return(3)
+        } else {
+            return(NA)
+        }
+    }, error = function(e) {
+        return(NA)
+    })
+}
+
+recode_rel_teach <- function(row) {
+    rel <- as.numeric(row['H1ED15'])
+
+    tryCatch({
+        if (rel %in% c(0:4)){
+            return(rel)
+        } else {
+            return(NA)
+        }
+    }, error = function(e) {
+        return(NA)
+    })
+}
+
+recode_rel_student <- function(row) {
+    rel <- as.numeric(row['H1ED18'])
+
+    tryCatch({
+        if (rel %in% c(0:4)) {
+            return(rel)
+        } else {
+            return(NA)
+        }
+    }, error = function(e) {
+            return(NA)
+    })
 }
