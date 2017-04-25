@@ -17,8 +17,6 @@ expect_equal(length(school_counts), nrow(df))
 
 df_analysis <- data.frame('school_counts' = school_counts)
 
-                                        # ggplot(data = as.data.frame(school_counts), aes(x = school_counts)) + geom_bar()
-
 school_bin <- sapply(X = school_counts, FUN = recode_school_bin, cutoff = 14)
 
 df_analysis <- cbind(df_analysis, school_bin)
@@ -33,7 +31,6 @@ any_risky_drink_df <- data.frame('any_drink' = any_drink, 'risky_drink' = risky_
 
 any_risky_drink_df$drink_cat_3 <- apply(any_risky_drink_df, 1, recode_drink_cat_3)
 
-# head(any_risky_drink_df)
 
 df_analysis <- cbind(df_analysis, any_risky_drink_df)
 
@@ -50,7 +47,6 @@ df_analysis <- cbind(df_analysis, race4)
 ## age
 age_cont <- apply(X = df, MARGIN = 1, FUN = recode_age_cont)
 
-                                        # hist(age_cont)
 df_analysis <- cbind(df_analysis, age_cont)
 
 
@@ -78,4 +74,4 @@ df_analysis$rel_teacher <- apply(df, 1, recode_rel_teach)
 ## relationship students
 df_analysis$rel_student <- apply(df, 1, recode_rel_student)
 
-save(df_analysis, file='output/data/w1_clean.RData')
+save(df_analysis, file = 'output/w1_recode.RData')
